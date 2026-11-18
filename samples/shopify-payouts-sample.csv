@@ -1,0 +1,4 @@
+Payout Date,Status,Charges,Refunds,Adjustments,Reserved Funds,Fees,Retried Amount,Total,Currency
+2026-11-02,paid,19210.50,-640.00,0.00,0.00,-598.20,0.00,17972.30,USD
+2026-11-05,paid,21480.00,-310.00,0.00,0.00,-664.10,0.00,20505.90,USD
+2026-11-09,in_transit,18800.00,0.00,0.00,0.00,-581.00,0.00,18219.00,USD

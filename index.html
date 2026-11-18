@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Skincare — E-commerce Cash Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600&family=DM+Serif+Display:ital@1&family=Fira+Code:wght@400;500&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;500;600&family=Playfair+Display:ital,wght@1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
+<style>
+/* ---------- Presets (aesthetic layer) ---------- */
+:root, [data-preset="organic"] {
+  --bg:#F2F0E9; --surface:#FBFAF6; --surface-2:#ECE9DF; --ink:#1A1A1A; --ink-2:#4A4A44; --ink-3:#7A786F;
+  --line:rgba(26,26,26,.10); --accent:#CC5833; --accent-ink:#F2F0E9; --brand:#2E4036; --brand-ink:#F2F0E9;
+  --s1:#1A6FA0; --s2:#CC5833; --good:#2E7D32; --bad:#B3261E; --fc-band:rgba(46,64,54,.06);
+  --f-head:"Plus Jakarta Sans","Outfit",system-ui,sans-serif; --f-drama:"Cormorant Garamond",Georgia,serif; --f-data:"IBM Plex Mono",ui-monospace,monospace;
+  --drama-size:1.12em; color-scheme:light;
+}
+[data-preset="midnight"] {
+  --bg:#0D0D12; --surface:#16161D; --surface-2:#2A2A35; --ink:#FAF8F5; --ink-2:#C8C4BC; --ink-3:#8E8A84;
+  --line:rgba(250,248,245,.09); --accent:#C9A84C; --accent-ink:#0D0D12; --brand:#C9A84C; --brand-ink:#0D0D12;
+  --s1:#A98832; --s2:#6F86D0; --good:#5BB974; --bad:#E5736B; --fc-band:rgba(201,168,76,.06);
+  --f-head:"Inter",system-ui,sans-serif; --f-drama:"Playfair Display",Georgia,serif; --f-data:"JetBrains Mono",ui-monospace,monospace;
+  --drama-size:1.02em; color-scheme:dark;
+}
+[data-preset="brutalist"] {
+  --bg:#E8E4DD; --surface:#F5F3EE; --surface-2:#DDD8CF; --ink:#111111; --ink-2:#3A3A3A; --ink-3:#6B6B6B;
+  --line:rgba(17,17,17,.16); --accent:#E63B2E; --accent-ink:#F5F3EE; --brand:#111111; --brand-ink:#F5F3EE;
+  --s1:#2F6FB0; --s2:#E63B2E; --good:#1E7B34; --bad:#C62A1F; --fc-band:rgba(17,17,17,.05);
+  --f-head:"Space Grotesk",system-ui,sans-serif; --f-drama:"DM Serif Display",Georgia,serif; --f-data:"Space Mono",ui-monospace,monospace;
+  --drama-size:1em; color-scheme:light;
+}
+[data-preset="vapor"] {
+  --bg:#0A0A14; --surface:#13131F; --surface-2:#18181B; --ink:#F0EFF4; --ink-2:#BDBBC9; --ink-3:#86849A;
+  --line:rgba(240,239,244,.09); --accent:#7B61FF; --accent-ink:#F0EFF4; --brand:#7B61FF; --brand-ink:#F0EFF4;
+  --s1:#7B61FF; --s2:#16A07E; --good:#3DD68C; --bad:#FF6B81; --fc-band:rgba(123,97,255,.07);
+  --f-head:"Sora",system-ui,sans-serif; --f-drama:"Instrument Serif",Georgia,serif; --f-data:"Fira Code",ui-monospace,monospace;
+  --drama-size:1.1em; color-scheme:dark;
+}
+
+/* ---------- Fixed design system ---------- */
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-head);-webkit-font-smoothing:antialiased;transition:background .4s,color .4s}
+.noise{position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.05}
+.noise svg{width:100%;height:100%}
+.shell{display:grid;grid-template-columns:260px 1fr;gap:20px;padding:20px;min-height:100vh;max-width:1600px;margin:0 auto}
+.side{background:var(--surface);border-radius:2.5rem;padding:28px 18px;position:sticky;top:20px;height:calc(100vh - 40px);display:flex;flex-direction:column;gap:6px;border:1px solid var(--line)}
+.brandmark{display:flex;align-items:center;gap:12px;padding:0 10px 22px}
+.brandmark .dot{width:42px;height:42px;border-radius:1.2rem;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-weight:700;font-size:18px}
+.brandmark b{display:block;font-size:16px}
+.brandmark small{color:var(--ink-3);font-size:12px}
+.navbtn{all:unset;cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:2rem;color:var(--ink-2);font-size:14.5px;font-weight:500;position:relative;overflow:hidden;transition:color .3s, transform .25s}
+.navbtn:hover{transform:scale(1.03)}
+.navbtn .fill{position:absolute;inset:0;background:var(--surface-2);transform:translateX(-101%);transition:transform .45s cubic-bezier(.2,.8,.2,1);border-radius:inherit;z-index:0}
+.navbtn:hover .fill{transform:translateX(0)}
+.navbtn.on{color:var(--brand-ink)}
+.navbtn.on .fill{transform:translateX(0);background:var(--brand)}
+.navbtn > *:not(.fill){position:relative;z-index:1}
+.navbtn svg{width:18px;height:18px}
+.side .foot{margin-top:auto;padding:16px 12px 0;color:var(--ink-3);font-size:12px;line-height:1.5}
+.main{display:flex;flex-direction:column;gap:20px;min-width:0}
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:20px;padding:12px 8px 0}
+.top .presets{justify-self:end}
+@media (max-width:1100px){.top{grid-template-columns:1fr}.top .presets{justify-self:start;grid-row:1}}
+.eyebrow{font-family:var(--f-data);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+h1{font-size:clamp(30px,3.4vw,46px);line-height:1.05;margin:6px 0 0;font-weight:600;letter-spacing:-.02em}
+h1 em,.drama{font-family:var(--f-drama);font-style:italic;font-weight:500;font-size:var(--drama-size);color:var(--accent)}
+.sub{color:var(--ink-2);margin:10px 0 0;max-width:640px;line-height:1.55;font-size:15px}
+.presets{display:flex;gap:6px;background:var(--surface);padding:6px;border-radius:2rem;border:1px solid var(--line);flex-wrap:wrap}
+
+/* magnetic button with sliding span layer */
+.mbtn{all:unset;cursor:pointer;position:relative;overflow:hidden;border-radius:2rem;padding:10px 18px;font-size:13.5px;font-weight:600;color:var(--ink);background:var(--surface-2);transition:transform .3s cubic-bezier(.2,.8,.2,1), color .35s;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.mbtn .slide{position:absolute;inset:0;background:var(--accent);transform:translateY(101%);transition:transform .45s cubic-bezier(.2,.8,.2,1);border-radius:inherit}
+.mbtn:hover .slide,.mbtn.on .slide{transform:translateY(0)}
+.mbtn:hover,.mbtn.on{color:var(--accent-ink)}
+.mbtn > .lbl{position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px}
+.mbtn.ghost{background:transparent}
+.mbtn:disabled{opacity:.4;cursor:default}
+.sw{width:12px;height:12px;border-radius:50%;display:inline-block;border:1px solid rgba(127,127,127,.4)}
+
+.grid{display:grid;gap:20px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g2{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
+.g2e{grid-template-columns:repeat(2,minmax(0,1fr))}
+.card{background:var(--surface);border-radius:2rem;padding:26px 28px;border:1px solid var(--line);min-width:0;transition:background .4s}
+.card.xl{border-radius:3rem;padding:30px 34px}
+.card h3{margin:0;font-size:16px;font-weight:600}
+.card .hint{color:var(--ink-3);font-size:13px;margin-top:4px}
+.kpi .label{color:var(--ink-2);font-size:13.5px}
+.kpi .val{font-family:var(--f-data);font-size:clamp(22px,2.1vw,30px);margin-top:12px;font-weight:500;letter-spacing:-.02em}
+.kpi .meta{margin-top:10px;font-size:12.5px;color:var(--ink-3);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.pill{font-family:var(--f-data);font-size:11.5px;padding:3px 10px;border-radius:2rem;background:var(--surface-2);color:var(--ink-2)}
+.pill.good{color:var(--good)} .pill.bad{color:var(--bad)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2);margin-top:12px}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.legend i.dash{background:repeating-linear-gradient(90deg,currentColor 0 4px,transparent 4px 7px)!important;height:2px}
+.mono{font-family:var(--f-data)}
+.chart{position:relative;margin-top:14px}
+.chart svg{display:block;width:100%;overflow:visible}
+.chart text{font-family:var(--f-data);font-size:11px;fill:var(--ink-3)}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:1.2rem;font-size:12px;line-height:1.6;min-width:170px;transform:translate(-50%,calc(-100% - 12px));white-space:nowrap;z-index:5;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.tip b{font-family:var(--f-head);display:block;margin-bottom:2px}
+.tip .row{display:flex;justify-content:space-between;gap:16px;font-family:var(--f-data)}
+.tip .k{display:inline-flex;align-items:center;gap:6px}
+.tip .k i{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--surface);z-index:1}
+th{font-weight:500;color:var(--ink-3);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;font-family:var(--f-data)}
+td{font-family:var(--f-data)}
+td:first-child{font-family:var(--f-head)}
+tr.sec td{font-weight:600;background:var(--surface-2)}
+tr.sec td:first-child{background:var(--surface-2)}
+tr.tot td{font-weight:600}
+th.fc,td.fc{background:var(--fc-band)}
+.tablewrap{overflow-x:auto;margin-top:16px;border-radius:1.5rem}
+.neg{color:var(--ink)} .muted{color:var(--ink-3)}
+.badge{font-family:var(--f-data);font-size:11px;padding:2px 8px;border-radius:2rem;display:inline-flex;align-items:center;gap:4px}
+.badge.good{color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent)}
+.badge.bad{color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)}
+
+.field{display:flex;flex-direction:column;gap:8px;padding:14px 0;border-bottom:1px solid var(--line)}
+.field:last-child{border-bottom:0}
+.field .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.field label{font-size:13.5px;color:var(--ink-2)}
+.field output{font-family:var(--f-data);font-size:13.5px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select,input[type=text],input[type=search],input[type=number]{font:inherit;font-size:13.5px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:2rem;padding:9px 14px;outline:none}
+.seg{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:2rem}
+.seg button{all:unset;cursor:pointer;flex:1;white-space:nowrap;text-align:center;padding:7px 10px;border-radius:2rem;font-size:12.5px;font-family:var(--f-data);color:var(--ink-2);transition:background .3s,color .3s,transform .25s}
+.seg button:hover{transform:scale(1.03)}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.drop{border:1.5px dashed var(--line);border-radius:2rem;padding:34px;text-align:center;color:var(--ink-2);transition:background .3s,border-color .3s}
+.drop.over{background:var(--fc-band);border-color:var(--accent)}
+.note{font-size:13px;color:var(--ink-2);line-height:1.6}
+.note code,.mono-s{font-family:var(--f-data);font-size:12px;background:var(--surface-2);padding:2px 7px;border-radius:.8rem}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.callout{display:flex;gap:14px;align-items:flex-start;padding:18px 22px;border-radius:2rem;background:var(--surface-2);font-size:13.5px;line-height:1.55;color:var(--ink-2)}
+.callout b{color:var(--ink)}
+.hbar{display:grid;grid-template-columns:minmax(120px,1.2fr) 2fr auto;gap:12px;align-items:center;padding:7px 0;font-size:13px;position:relative}
+.hbar .track{height:10px;border-radius:2rem;background:var(--surface-2);overflow:hidden}
+.hbar .bar{height:100%;border-radius:2rem;background:var(--s2)}
+.hbar .v{font-family:var(--f-data);font-size:12.5px;color:var(--ink-2);min-width:70px;text-align:right}
+.hbar:hover .bar{filter:brightness(1.1)}
+@media (max-width:1100px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g2,.g2e{grid-template-columns:1fr}}
+@media (max-width:860px){.shell{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;border-radius:2rem}.side .foot,.brandmark small{display:none}.brandmark{padding:0 8px}}
+@media (max-width:560px){.g4{grid-template-columns:1fr}.shell{padding:12px}}
+</style>
+</head>
+<body data-preset="midnight">
+<div class="noise" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg"><filter id="nz"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#nz)"/></svg></div>
+<div id="root"></div>
+<script>
+(function(){
+"use strict";
+const {useState,useEffect,useMemo,useRef} = React;
+const html = htm.bind(React.createElement);
+
+/* =====================================================================
+   1. DEMO DATA — A fictional US skincare brand
+   selling on Shopify and Amazon. Deterministic (seeded).
+   ===================================================================== */
+const CATS = [
+  {id:"shop_payouts",name:"Shopify payouts",section:"operating",kind:"in"},
+  {id:"amz_settle",name:"Amazon settlements",section:"operating",kind:"in"},
+  {id:"inv_dep",name:"Inventory — supplier deposits",section:"operating",kind:"out"},
+  {id:"inv_bal",name:"Inventory — balances on shipment",section:"operating",kind:"out"},
+  {id:"freight",name:"Freight & import duties",section:"operating",kind:"out"},
+  {id:"fulfil",name:"Fulfillment (3PL)",section:"operating",kind:"out"},
+  {id:"meta",name:"Meta Ads",section:"operating",kind:"out"},
+  {id:"google",name:"Google Ads",section:"operating",kind:"out"},
+  {id:"amz_ads",name:"Amazon Ads",section:"operating",kind:"out"},
+  {id:"influencer",name:"Influencers & content",section:"operating",kind:"out"},
+  {id:"payroll",name:"Payroll",section:"operating",kind:"out"},
+  {id:"ptax",name:"Payroll taxes & benefits",section:"operating",kind:"out"},
+  {id:"software",name:"Shopify plan, apps & software",section:"operating",kind:"out"},
+  {id:"rent",name:"Studio rent",section:"operating",kind:"out"},
+  {id:"insurance",name:"Insurance",section:"operating",kind:"out"},
+  {id:"professional",name:"Professional fees",section:"operating",kind:"out"},
+  {id:"bank",name:"Bank fees",section:"operating",kind:"out"},
+  {id:"salestax",name:"Sales tax remitted",section:"operating",kind:"out"},
+  {id:"tax",name:"Estimated income tax",section:"operating",kind:"out"},
+  {id:"capex",name:"Equipment",section:"investing",kind:"out"},
+  {id:"cap_in",name:"Shopify Capital advance",section:"financing",kind:"in"},
+  {id:"cap_out",name:"Shopify Capital remittances",section:"financing",kind:"out"}
+];
+const OPENING_BALANCE = 40000;
+const FIRST_MONTH = "2025-01", LAST_ACTUAL = "2026-10";
+const P = {tax:.065, shopFee:.029, perOrder:.30, aov:52, amzFee:.28, perOrder3pl:5.6, storage3pl:900, capRate:.12, capTotal:66600, payLag:.1, amzLag:.5};
+const SEASON_S=[0.80,0.82,0.95,0.95,1.08,0.90,0.88,0.90,0.95,1.02,1.85,1.55];
+const SEASON_A=[0.85,0.85,0.95,0.95,1.00,0.95,1.35,0.95,0.95,1.00,1.45,1.45];
+
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const pad=n=>String(n).padStart(2,"0");
+const ym=(y,m)=>y+"-"+pad(m);
+function addMonths(k,n){let [y,m]=k.split("-").map(Number);m+=n;while(m>12){m-=12;y++}while(m<1){m+=12;y--}return ym(y,m)}
+function monthsBetween(a,b){const out=[];let k=a;while(k<=b){out.push(k);k=addMonths(k,1)}return out}
+function addDays(d,n){const t=new Date(d+"T12:00:00Z");t.setUTCDate(t.getUTCDate()+n);return t.toISOString().slice(0,10)}
+const dim=k=>new Date(Date.UTC(+k.slice(0,4),+k.slice(5),0)).getUTCDate();
+const MLABEL=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const mLabel=k=>MLABEL[+k.slice(5)-1]+" "+k.slice(2,4);
+const mLong=k=>["January","February","March","April","May","June","July","August","September","October","November","December"][+k.slice(5)-1]+" "+k.slice(0,4);
+const avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:0;
+
+function generate(){
+  const r=rng(424242), rr=(a,b)=>a+(b-a)*r(), ri=(a,b)=>Math.round(rr(a,b));
+  const END=LAST_ACTUAL+"-31";
+  const tx=[]; let id=0;
+  const add=(date,amount,description,counterparty,category)=>{ if(date>="2025-01-01"&&date<=END&&Math.abs(amount)>=0.5) tx.push({id:"t"+(++id),date,amount:Math.round(amount),description,counterparty,category}) };
+  // ---- monthly sales plan (actual for past months)
+  const all=monthsBetween("2024-10","2027-03");
+  const shopG={},amzG={};
+  all.forEach((k,i0)=>{const i=i0-3,m=+k.slice(5);
+    let s=145000*Math.pow(1.017,i)*SEASON_S[m-1]*(1+rr(-.04,.04));
+    if(k>="2026-05"&&k<="2026-07") s*=0.93;      // ad costs up, conversion down
+    if(k==="2025-11") s*=1.08;                    // strong first BFCM
+    let a=48000*Math.pow(1.012,i)*SEASON_A[m-1]*(1+rr(-.05,.05));
+    if(k>="2026-03"&&k<="2026-06") a*=0.86;       // Amazon listing suppressed for 6 weeks
+    shopG[k]=s; amzG[k]=a;});
+  // ---- daily simulation: Shopify payouts (Mon/Thu, T+2) & Amazon settlements (every 14 days)
+  const sales={}, snap={};
+  let pendS=[],pendA=[],capRem=0,nextAmz="2024-10-09";
+  const days=[];for(let d="2024-10-01";d<=END;d=addDays(d,1))days.push(d);
+  const weight=(d)=>{const k=d.slice(0,7),m=+k.slice(5),day=+d.slice(8);let w=1;
+    if(m===11&&day>=24)w=3.2; if(m===12&&day<=2)w=2.4; if(m===12&&day>=22)w=.5; return w};
+  const wsum={};days.forEach(d=>{const k=d.slice(0,7);wsum[k]=(wsum[k]||0)+weight(d)});
+  const wsumA={};const wA=d=>{const m=+d.slice(5,7),day=+d.slice(8);return (m===7&&day>=8&&day<=11)?3:(m===11&&day>=24)?2:1};days.forEach(d=>{const k=d.slice(0,7);wsumA[k]=(wsumA[k]||0)+wA(d)});
+  days.forEach(d=>{
+    const k=d.slice(0,7);
+    if(!sales[k])sales[k]={shopGross:0,shopTax:0,shopRefunds:0,shopFees:0,shopOrders:0,amzGross:0,amzRefunds:0,amzFees:0};
+    const S=sales[k];
+    const g=shopG[k]*weight(d)/wsum[k], o=g/P.aov, tax=g*P.tax, ref=g*rr(.03,.05), fee=g*P.shopFee+o*P.perOrder;
+    S.shopGross+=g;S.shopTax+=tax;S.shopRefunds+=ref;S.shopFees+=fee;S.shopOrders+=o;
+    pendS.push({d,v:g+tax-ref-fee});
+    const a=amzG[k]*wA(d)/wsumA[k], aref=a*rr(.02,.04), afee=a*P.amzFee;
+    S.amzGross+=a;S.amzRefunds+=aref;S.amzFees+=afee;
+    pendA.push({d,v:a-aref-afee});
+    if(d==="2025-08-04"){add(d,60000,"Shopify Capital advance (fixed fee $6,600)","Shopify Capital","cap_in");capRem=P.capTotal}
+    const dow=new Date(d+"T12:00:00Z").getUTCDay();
+    if(dow===1||dow===4){const cut=addDays(d,-2);const due=pendS.filter(x=>x.d<=cut);pendS=pendS.filter(x=>x.d>cut);
+      const amt=due.reduce((s,x)=>s+x.v,0);
+      if(amt>0){add(d,amt,"Shopify Payments payout","Shopify Payments","shop_payouts");
+        if(capRem>0&&d>="2025-08-05"){const w=Math.min(capRem,amt*P.capRate);capRem-=w;add(d,-w,"Shopify Capital remittance (withheld from payout)","Shopify Capital","cap_out")}}}
+    if(d===nextAmz){const cut=addDays(d,-3);const due=pendA.filter(x=>x.d<=cut);pendA=pendA.filter(x=>x.d>cut);
+      const amt=due.reduce((s,x)=>s+x.v,0);add(d,amt,"Amazon settlement "+addDays(cut,-13)+" to "+cut,"Amazon Seller Central","amz_settle");nextAmz=addDays(d,14)}
+    if(d.slice(8)===pad(dim(k))) snap[k]={itShop:pendS.reduce((s,x)=>s+x.v,0),itAmz:pendA.reduce((s,x)=>s+x.v,0),capRem};
+  });
+  // ---- purchase orders: placed 3 months before the sales month, 30% deposit, 70% on shipment, landed costs on arrival
+  const pos=[];let poNo=300;
+  monthsBetween("2025-01","2027-01").forEach(S=>{
+    const t=addMonths(S,-3); if(t>LAST_ACTUAL) return;
+    const amount=Math.round(.24*(shopG[S]+amzG[S])*(1+rr(-.05,.08))/100)*100;
+    const ship=addMonths(S,-1), fr=ship>="2026-05"?.16:.09;
+    const po={no:"PO-"+(++poNo),placed:t,salesMonth:S,amount,depDate:t+"-05",dep:amount*.3,balDate:ship+"-20",bal:amount*.7,frDate:ship+"-27",fr:amount*fr};
+    pos.push(po);
+    add(po.depDate,-po.dep,po.no+" 30% deposit — stock for "+mLong(S),"Verdant Labs (contract manufacturer)","inv_dep");
+    add(po.balDate,-po.bal,po.no+" 70% balance on shipment","Verdant Labs (contract manufacturer)","inv_bal");
+    add(po.frDate,-po.fr,po.no+" ocean freight, customs & duties","Flexport","freight");
+  });
+  // ---- monthly operating costs
+  monthsBetween(FIRST_MONTH,LAST_ACTUAL).forEach((k,i)=>{
+    const [y,m]=k.split("-").map(Number), prev=addMonths(k,-1), S=sales[k], Sp=sales[prev];
+    const g=S.shopGross, a=S.amzGross;
+    const bf=(m===11||m===12)?1.15:1, cpm=(k>="2026-05"&&k<="2026-08")?1.25:1;
+    const meta=g*.20*bf*cpm, goog=g*.07*bf;
+    [8,18,28].forEach((day,j)=>add(k+"-"+pad(Math.min(day,dim(k))),-meta/3,"Meta ads billing","Meta Platforms","meta"));
+    add(k+"-"+pad(dim(k)),-goog,"Google Ads monthly invoice","Google Ads","google");
+    add(k+"-"+pad(Math.min(30,dim(k))),-a*.10*bf,"Sponsored Products","Amazon Advertising","amz_ads");
+    add(k+"-"+pad(ri(5,24)),-rr(1800,4200)*(m===10||m===11?1.6:1),"Creator content & gifting","Creator collective","influencer");
+    add(k+"-10",-((Sp?Sp.shopOrders:g/P.aov)*P.perOrder3pl+P.storage3pl),"Pick, pack & storage "+mLong(prev),"ShipBob","fulfil");
+    let pay=31500*(k>="2026-01"?1.03:1)+(k>="2026-04"?7000:0);
+    add(k+"-15",-pay/2,"Payroll (1st half) "+mLong(k),"Gusto","payroll");
+    add(k+"-"+pad(dim(k)),-pay/2,"Payroll (2nd half) "+mLong(k),"Gusto","payroll");
+    add(k+"-20",-pay*.15,"Payroll taxes & benefits","Gusto","ptax");
+    add(k+"-02",-399,"Shopify Plus plan","Shopify","software");
+    add(k+"-04",-(Sp?Sp.shopGross:g)*.006,"Email & SMS platform","Klaviyo","software");
+    add(k+"-06",-rr(550,800),"Apps: reviews, subscriptions, analytics","Shopify App Store","software");
+    add(k+"-01",-3400,"Studio & office rent","Brooklyn Navy Yard Studios","rent");
+    add(k+"-05",-420,"Product liability insurance","Hiscox","insurance");
+    add(k+"-"+pad(Math.min(30,dim(k))),-rr(35,60),"Account fees","Mercury Bank","bank");
+    if(m%3===1) add(k+"-18",-3500,"Quarterly bookkeeping & tax advisory","Ledger & Co CPAs","professional");
+    if(Sp) add(k+"-20",-Sp.shopTax,"Sales tax filing "+mLong(prev),"State tax agencies (via TaxJar)","salestax");
+    if([1,4,6,9].includes(m)) add(k+"-15",-(y===2025?6000:8500),"Estimated tax payment — "+["Q4 "+(y-1),"Q1","Q2","Q3"][[1,4,6,9].indexOf(m)],"IRS","tax");
+  });
+  add("2025-03-12",-8500,"Photo studio lighting & camera kit","B&H Photo","capex");
+  // December 2024 sales tax (paid Jan 2025) uses the Dec 2024 simulation
+  tx.sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);
+  const salesOut={};Object.keys(sales).filter(k=>k>=FIRST_MONTH).forEach(k=>salesOut[k]=Object.fromEntries(Object.entries(sales[k]).map(([a,b])=>[a,Math.round(b)])));
+  return {transactions:tx,categories:CATS,sales:salesOut,snap,pos,openingBalance:OPENING_BALANCE};
+}
+
+/* =====================================================================
+   2. STORAGE (browser only — no backend)
+   ===================================================================== */
+const KEY="fernleaf-cashflow-v1";
+function loadState(){try{const s=localStorage.getItem(KEY);if(s){const p=JSON.parse(s);if(p&&p.transactions&&p.sales)return p}}catch(e){}return generate()}
+function saveState(s){try{localStorage.setItem(KEY,JSON.stringify(s))}catch(e){}}
+function savePreset(p){try{localStorage.setItem(KEY+"-preset",p)}catch(e){}}
+function loadPreset(){try{const p=localStorage.getItem(KEY+"-preset");return ["midnight","brutalist","vapor"].includes(p)?p:"midnight"}catch(e){return "midnight"}}
+
+/* =====================================================================
+   3. ANALYTICS
+   ===================================================================== */
+const fmt=(v,opts={})=>{const n=Math.round(v);const s=Math.abs(n).toLocaleString("en-US");return (n<0?"−":opts.sign&&n>0?"+":"")+"$"+s};
+const fmtK=v=>{const a=Math.abs(v);const s=a>=1e6?(a/1e6).toFixed(2)+"M":a>=1e3?Math.round(a/1e3)+"k":Math.round(a)+"";return (v<0?"−":"")+"$"+s};
+const pct=v=>(v>0?"+":"")+(v*100).toFixed(1)+"%";
+function lastMonth(state){let m=LAST_ACTUAL;state.transactions.forEach(t=>{const k=t.date.slice(0,7);if(k>m)m=k});return m}
+/* Reports run through the last closed month (the last month with sales data);
+   later bank rows sit in the open period until that month is closed. */
+function closedThrough(state){const ks=Object.keys(state.sales||{}).sort();return ks.length?ks[ks.length-1]:lastMonth(state)}
+function monthly(state){
+  const months=monthsBetween(FIRST_MONTH,closedThrough(state));
+  const byCat={};state.categories.forEach(c=>byCat[c.id]=months.map(()=>0));
+  const inflow=months.map(()=>0),outflow=months.map(()=>0);
+  state.transactions.forEach(t=>{const i=months.indexOf(t.date.slice(0,7));if(i<0)return;if(!byCat[t.category])byCat[t.category]=months.map(()=>0);byCat[t.category][i]+=t.amount;if(t.amount>0)inflow[i]+=t.amount;else outflow[i]+=t.amount});
+  const net=months.map((_,i)=>inflow[i]+outflow[i]);
+  const closing=[];let b=state.openingBalance;net.forEach(n=>{b+=n;closing.push(b)});
+  return {months,byCat,inflow,outflow,net,closing};
+}
+
+/* ---------------------------------------------------------------------
+   Projection engine — shared by the forecast and the budget.
+   Sales (P&L) → payouts with platform lags → cash; inventory bought
+   ahead of sales with a deposit and a balance on shipment.
+   --------------------------------------------------------------------- */
+function seasonality(state){
+  const ks=monthsBetween("2025-01","2025-12");const s=ks.map(k=>state.sales[k]?.shopGross||0),a=ks.map(k=>state.sales[k]?.amzGross||0);
+  const sa=avg(s)||1,aa=avg(a)||1;return {s:s.map(x=>x/sa),a:a.map(x=>x/aa)};
+}
+function project(state,M,cut,months,shop,amz,A){
+  // shop/amz: gross sales for months + 4 extra months (to place POs ahead)
+  const ext=monthsBetween(months[0],addMonths(months[0],months.length+3));
+  const ci=M.months.indexOf(cut);
+  const upTo=(cat,n)=>{const a=M.byCat[cat]||[];return a.slice(Math.max(0,ci-n+1),ci+1)};
+  const lastNZ=(cat,d)=>{const a=M.byCat[cat]||[];for(let i=ci;i>=0;i--)if(Math.abs(a[i])>.5)return a[i];return d};
+  const sn=state.snap[cut]||{itShop:0,itAmz:0,capRem:0};
+  const rows={};state.categories.forEach(c=>rows[c.id]=months.map(()=>0));
+  const idx=k=>{const i=months.indexOf(k);return i<0?(k<months[0]?0:-1):i};
+  const put=(cat,k,v)=>{const i=idx(k);if(i>=0)rows[cat][i]+=v};
+  const cutEnd=cut+"-31";
+  // committed purchase orders already placed
+  const placed=new Set();const poList=[];
+  state.pos.forEach(p=>{if(p.placed>cut)return;placed.add(p.salesMonth);
+    const open=p.balDate>cutEnd||p.frDate>cutEnd;
+    if(p.depDate>cutEnd)put("inv_dep",p.depDate.slice(0,7),-p.dep);
+    if(p.balDate>cutEnd)put("inv_bal",p.balDate.slice(0,7),-p.bal);
+    if(p.frDate>cutEnd)put("freight",p.frDate.slice(0,7),-p.fr);
+    if(open)poList.push({...p,status:"Placed"})});
+  // new purchase orders
+  const frRate=A.freight/100;
+  ext.forEach((S,j)=>{if(placed.has(S))return;let t=addMonths(S,-(A.lead+1));if(t<=cut)t=months[0];if(t>months[months.length-1])return;
+    const amount=A.cogs/100*(shop[j]+amz[j]);const ship=addMonths(t,A.lead);
+    put("inv_dep",t,-amount*A.deposit/100);put("inv_bal",ship,-amount*(1-A.deposit/100));put("freight",ship,-amount*frRate);
+    poList.push({no:"Planned",placed:t,salesMonth:S,amount,depDate:t,dep:amount*A.deposit/100,balDate:ship,bal:amount*(1-A.deposit/100),status:"Planned"})});
+  const S0=state.sales[cut]||{shopGross:shop[0],shopTax:shop[0]*P.tax,shopOrders:shop[0]/P.aov};
+  let capRem=sn.capRem;const payBase=lastNZ("payroll",-31500);
+  const netS=g=>g*(1+P.tax)-g*A.refunds/100-(g*P.shopFee+g/P.aov*P.perOrder);
+  const netA=a=>a*(1-A.refunds/100*.75-P.amzFee);
+  const shopIn=[],amzIn=[];
+  months.forEach((k,i)=>{
+    const m=+k.slice(5),g=shop[i],a=amz[i],gp=i===0?S0.shopGross:shop[i-1];
+    const ps=(i===0?sn.itShop:netS(shop[i-1])*P.payLag)+netS(g)*(1-P.payLag);
+    const pa=(i===0?sn.itAmz:netA(amz[i-1])*P.amzLag)+netA(a)*(1-P.amzLag);
+    rows.shop_payouts[i]=ps;rows.amz_settle[i]=pa;shopIn.push(ps);amzIn.push(pa);
+    if(capRem>0){const w=Math.min(capRem,ps*P.capRate);capRem-=w;rows.cap_out[i]=-w}
+    rows.salestax[i]=-(i===0?S0.shopTax:gp*P.tax);
+    rows.fulfil[i]=-(gp/P.aov*P.perOrder3pl+P.storage3pl);
+    const bf=(m===11||m===12)?1.15:1;
+    rows.meta[i]=-g*A.ads/100*.73*bf;rows.google[i]=-g*A.ads/100*.27*bf;rows.amz_ads[i]=-a*.10*bf;
+    rows.influencer[i]=avg(upTo("influencer",6))*((m===10||m===11)?1.4:1);
+    let pay=payBase;if(A.hire>=0&&i>=A.hire)pay-=A.hireCost;rows.payroll[i]=pay;rows.ptax[i]=pay*.15;
+    rows.software[i]=-(399+gp*.006+680);
+    rows.rent[i]=lastNZ("rent",-3400)*(k.slice(0,4)>cut.slice(0,4)?1+A.rentInc/100:1);
+    rows.insurance[i]=lastNZ("insurance",-420);rows.bank[i]=avg(upTo("bank",6));
+    rows.professional[i]=m%3===1?-3500:0;
+    const lt=Math.min(...upTo("tax",12).filter(x=>x<0),0)||-8500;
+    rows.tax[i]=[1,4,6,9].includes(m)?lt*(k.slice(0,4)>cut.slice(0,4)?1.1:1):0;
+    if(A.capexAmt>0&&i===A.capexMonth)rows.capex[i]-=A.capexAmt;
+  });
+  state.categories.forEach(c=>{if(!CATS.find(x=>x.id===c.id)){const a=avg(upTo(c.id,6));rows[c.id]=months.map(()=>a)}});
+  const net=months.map((_,i)=>Object.values(rows).reduce((s,r)=>s+r[i],0));
+  const inflow=months.map((_,i)=>Object.values(rows).reduce((s,r)=>s+Math.max(r[i],0),0));
+  const outflow=months.map((_,i)=>Object.values(rows).reduce((s,r)=>s+Math.min(r[i],0),0));
+  const open=ci>=0?M.closing[ci]:state.openingBalance;
+  const closing=[];let b=open;net.forEach(n=>{b+=n;closing.push(b)});
+  poList.sort((x,y)=>x.salesMonth<y.salesMonth?-1:1);
+  return {months,byCat:rows,net,inflow,outflow,closing,openingBalance:open,shop:shop.slice(0,months.length),amz:amz.slice(0,months.length),pos:poList,capRemEnd:capRem};
+}
+function forecast(state,A,M){
+  const cut=M.months[M.months.length-1];
+  const fm=monthsBetween(addMonths(cut,1),addMonths(cut,12));
+  const ext=monthsBetween(fm[0],addMonths(fm[0],15));
+  const se=seasonality(state);
+  const recent=monthsBetween(addMonths(LAST_ACTUAL,-2),LAST_ACTUAL).filter(k=>state.sales[k]);
+  const baseS=avg(recent.map(k=>state.sales[k].shopGross/se.s[+k.slice(5)-1]));
+  const baseA=avg(recent.map(k=>state.sales[k].amzGross/se.a[+k.slice(5)-1]));
+  const lastSales=recent[recent.length-1];const off=monthsBetween(lastSales,fm[0]).length-1;
+  const bfcm=m=>(m===11||m===12)?A.bfcm/100:1;
+  const shop=ext.map((k,i)=>{const m=+k.slice(5);return baseS*se.s[m-1]*bfcm(m)*Math.pow(1+A.growthS/100,i+off)});
+  const amz=ext.map((k,i)=>{const m=+k.slice(5);return baseA*se.a[m-1]*Math.pow(1+A.growthA/100,i+off)});
+  return project(state,M,cut,fm,shop,amz,A);
+}
+const DEFAULT_A={growthS:1.0,growthA:0.5,bfcm:100,ads:28,refunds:4,cogs:24,deposit:30,lead:2,freight:16,hire:5,hireCost:7500,rentInc:4,capexAmt:0,capexMonth:4,minCash:75000};
+const BUDGET_A={growthS:0,growthA:0,bfcm:100,ads:26,refunds:4,cogs:24,deposit:30,lead:2,freight:9,hire:2,hireCost:7000,rentInc:0,capexAmt:0,capexMonth:0,minCash:75000};
+function budget(state,M){
+  const months=monthsBetween("2026-01","2026-12");const ext=monthsBetween("2026-01","2027-04");
+  const s25=k=>state.sales["2025-"+k.slice(5)]||{shopGross:0,amzGross:0};
+  const shop=ext.map(k=>s25(k).shopGross*(k<"2027"?1.22:1.45));
+  const amz=ext.map(k=>s25(k).amzGross*(k<"2027"?1.15:1.3));
+  if(M.months.indexOf("2025-12")<0) return null;
+  return project(state,M,"2025-12",months,shop,amz,BUDGET_A);
+}
+
+/* =====================================================================
+   4. CHART PRIMITIVES (plain SVG, hover layer included)
+   ===================================================================== */
+function useWidth(){const ref=useRef(null);const [w,setW]=useState(700);useEffect(()=>{if(!ref.current)return;const ro=new ResizeObserver(e=>setW(Math.max(280,e[0].contentRect.width)));ro.observe(ref.current);return()=>ro.disconnect()},[]);return [ref,w]}
+function niceTicks(min,max,n=4){const span=max-min||1;const step0=span/n;const mag=Math.pow(10,Math.floor(Math.log10(step0)));const step=[1,2,2.5,5,10].map(x=>x*mag).find(x=>x>=step0);const lo=Math.floor(min/step)*step,hi=Math.ceil(max/step)*step;const t=[];for(let v=lo;v<=hi+1e-9;v+=step)t.push(v);return t}
+
+/* Line chart: series [{name,color,values,dashFrom}] over labels */
+function LineChart({labels,series,height=260,refLine,splitAt}){
+  const [ref,w]=useWidth();const [hover,setHover]=useState(null);
+  const pl=58,pr=16,pt=14,pb=28;const iw=w-pl-pr,ih=height-pt-pb;
+  const all=series.flatMap(s=>s.values.filter(v=>v!=null)).concat(refLine?[refLine.value]:[]);
+  const ticks=niceTicks(Math.min(0,...all),Math.max(...all));
+  const y0=ticks[0],y1=ticks[ticks.length-1];
+  const x=i=>pl+(labels.length<2?iw/2:i*iw/(labels.length-1));const y=v=>pt+ih-(v-y0)/(y1-y0)*ih;
+  const every=Math.ceil(labels.length/(w<520?5:9));
+  const path=(vals,from,to)=>{let d="";for(let i=from;i<=to;i++){if(vals[i]==null)continue;d+=(d?"L":"M")+x(i).toFixed(1)+" "+y(vals[i]).toFixed(1)}return d};
+  const onMove=e=>{const r=e.currentTarget.getBoundingClientRect();const px=e.clientX-r.left;const i=Math.round((px-pl)/iw*(labels.length-1));setHover(Math.max(0,Math.min(labels.length-1,i)))};
+  return html`<div class="chart" ref=${ref}>
+    <svg height=${height} onMouseMove=${onMove} onMouseLeave=${()=>setHover(null)} role="img" aria-label=${series.map(s=>s.name).join(", ")}>
+      ${splitAt!=null&&html`<rect x=${x(splitAt)} y=${pt} width=${x(labels.length-1)-x(splitAt)} height=${ih} fill="var(--fc-band)" rx="10"/>`}
+      ${splitAt!=null&&html`<text x=${x(splitAt)+8} y=${pt+14}>FORECAST →</text>`}
+      ${ticks.map(t=>html`<g key=${t}><line x1=${pl} x2=${w-pr} y1=${y(t)} y2=${y(t)} stroke="var(--line)" stroke-width=${t===0?1.5:1}/><text x=${pl-10} y=${y(t)+4} text-anchor="end">${fmtK(t)}</text></g>`)}
+      ${labels.map((l,i)=>i%every===0&&html`<text key=${l} x=${x(i)} y=${height-8} text-anchor="middle">${l}</text>`)}
+      ${refLine&&html`<g><line x1=${pl} x2=${w-pr} y1=${y(refLine.value)} y2=${y(refLine.value)} stroke="var(--bad)" stroke-width="1.5" stroke-dasharray="2 4"/><text x=${w-pr} y=${y(refLine.value)-6} text-anchor="end" style=${{fill:"var(--bad)"}}>${refLine.label}</text></g>`}
+      ${series.map(s=>{const df=s.dashFrom??s.values.length;return html`<g key=${s.name}>
+        <path d=${path(s.values,0,Math.min(df,s.values.length-1))} fill="none" stroke=${s.color} stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray=${s.dashed?"5 5":null}/>
+        ${df<s.values.length&&html`<path d=${path(s.values,df,s.values.length-1)} fill="none" stroke=${s.color} stroke-width="2" stroke-dasharray="5 5" stroke-linecap="round"/>`}
+      </g>`})}
+      ${hover!=null&&html`<g><line x1=${x(hover)} x2=${x(hover)} y1=${pt} y2=${pt+ih} stroke="var(--ink-3)" stroke-width="1"/>
+        ${series.map(s=>s.values[hover]!=null&&html`<circle key=${s.name} cx=${x(hover)} cy=${y(s.values[hover])} r="5" fill=${s.color} stroke="var(--surface)" stroke-width="2"/>`)}</g>`}
+      <rect x=${pl} y=${pt} width=${iw} height=${ih} fill="transparent"/>
+    </svg>
+    ${hover!=null&&html`<div class="tip" style=${{left:x(hover),top:Math.min(...series.filter(s=>s.values[hover]!=null).map(s=>y(s.values[hover])))}}>
+      <b>${labels[hover]}${splitAt!=null&&hover>=splitAt?" · forecast":""}</b>
+      ${series.map(s=>s.values[hover]!=null&&html`<div class="row" key=${s.name}><span class="k"><i style=${{background:s.color}}></i>${s.name}</span><span>${fmt(s.values[hover])}</span></div>`)}
+    </div>`}
+  </div>`;
+}
+
+/* Grouped bar chart (inflow up, outflow down from a zero baseline) */
+function DivergingBars({labels,up,down,upName,downName,height=260,splitAt}){
+  const [ref,w]=useWidth();const [hover,setHover]=useState(null);
+  const pl=58,pr=12,pt=12,pb=28;const iw=w-pl-pr,ih=height-pt-pb;
+  const ticks=niceTicks(Math.min(...down),Math.max(...up));const y0=ticks[0],y1=ticks[ticks.length-1];
+  const y=v=>pt+ih-(v-y0)/(y1-y0)*ih;const bw=iw/labels.length;const barW=Math.max(3,Math.min(22,bw*.58));
+  const every=Math.ceil(labels.length/(w<520?5:9));
+  const r=4;
+  const bar=(cx,v,color,op)=>{const top=v>=0?y(v):y(0);const h=Math.abs(y(v)-y(0));if(h<1)return null;const rr=Math.min(r,h);
+    const x0=cx-barW/2;
+    const d=v>=0?`M${x0},${y(0)}V${top+rr}Q${x0},${top} ${x0+rr},${top}H${x0+barW-rr}Q${x0+barW},${top} ${x0+barW},${top+rr}V${y(0)}Z`
+               :`M${x0},${y(0)}V${y(v)-rr}Q${x0},${y(v)} ${x0+rr},${y(v)}H${x0+barW-rr}Q${x0+barW},${y(v)} ${x0+barW},${y(v)-rr}V${y(0)}Z`;
+    return html`<path d=${d} fill=${color} opacity=${op}/>`};
+  return html`<div class="chart" ref=${ref}>
+    <svg height=${height} onMouseLeave=${()=>setHover(null)} role="img" aria-label=${upName+" and "+downName+" by month"}>
+      ${splitAt!=null&&html`<rect x=${pl+splitAt*bw} y=${pt} width=${(labels.length-splitAt)*bw} height=${ih} fill="var(--fc-band)" rx="10"/>`}
+      ${ticks.map(t=>html`<g key=${t}><line x1=${pl} x2=${w-pr} y1=${y(t)} y2=${y(t)} stroke="var(--line)" stroke-width=${t===0?1.5:1}/><text x=${pl-10} y=${y(t)+4} text-anchor="end">${fmtK(t)}</text></g>`)}
+      ${labels.map((l,i)=>{const cx=pl+bw*i+bw/2;const op=hover==null||hover===i?1:.45;const fc=splitAt!=null&&i>=splitAt;return html`<g key=${l}>
+        ${bar(cx,up[i],"var(--s1)",fc?op*.55:op)}${bar(cx,down[i],"var(--s2)",fc?op*.55:op)}
+        ${i%every===0&&html`<text x=${cx} y=${height-8} text-anchor="middle">${l}</text>`}
+        <rect x=${pl+bw*i} y=${pt} width=${bw} height=${ih} fill="transparent" onMouseEnter=${()=>setHover(i)}/>
+      </g>`})}
+    </svg>
+    ${hover!=null&&html`<div class="tip" style=${{left:pl+bw*hover+bw/2,top:y(up[hover])}}>
+      <b>${labels[hover]}${splitAt!=null&&hover>=splitAt?" · forecast":""}</b>
+      <div class="row"><span class="k"><i style=${{background:"var(--s1)"}}></i>${upName}</span><span>${fmt(up[hover])}</span></div>
+      <div class="row"><span class="k"><i style=${{background:"var(--s2)"}}></i>${downName}</span><span>${fmt(down[hover])}</span></div>
+      <div class="row"><span>Net</span><span>${fmt(up[hover]+down[hover],{sign:1})}</span></div>
+    </div>`}
+  </div>`;
+}
+
+/* =====================================================================
+   5. UI ATOMS
+   ===================================================================== */
+function MBtn({children,on,onClick,ghost,disabled,title}){
+  const ref=useRef(null);
+  const move=e=>{const el=ref.current;if(!el)return;const r=el.getBoundingClientRect();const dx=(e.clientX-r.left-r.width/2)/r.width,dy=(e.clientY-r.top-r.height/2)/r.height;el.style.transform=`translate(${dx*6}px,${dy*5}px) scale(1.03)`};
+  const leave=()=>{if(ref.current)ref.current.style.transform=""};
+  return html`<button ref=${ref} class=${"mbtn"+(on?" on":"")+(ghost?" ghost":"")} onMouseMove=${move} onMouseLeave=${leave} onClick=${onClick} disabled=${disabled} title=${title}><span class="slide"></span><span class="lbl">${children}</span></button>`;
+}
+const Icon={
+  overview:html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 13a8 8 0 0 1 16 0"/><path d="M12 13l4-4"/><path d="M4 19h16"/></svg>`,
+  statement:html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>`,
+  forecast:html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 17l5-5 4 3 4-6"/><path d="M16 9l5-4" stroke-dasharray="2 3"/><path d="M3 21h18"/></svg>`,
+  budget:html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 20V10M10 20V4M15 20v-8M20 20v-5"/></svg>`,
+  tx:html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>`,
+  upload:html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 20h16"/></svg>`
+};
+function useReveal(deps){
+  const ref=useRef(null);
+  useEffect(()=>{if(!ref.current||!window.gsap)return;const ctx=gsap.context(()=>{gsap.from(".reveal",{y:26,opacity:0,duration:.85,stagger:.06,ease:"power3.out",clearProps:"transform,opacity"})},ref);return()=>ctx.revert()},deps);
+  return ref;
+}
+function Kpi({label,value,meta,children}){return html`<div class="card kpi reveal"><div class="label">${label}</div><div class="val">${value}</div><div class="meta">${meta}${children}</div></div>`}
+
+
+/* CSV parsing — native format or QuickBooks "Transaction Detail" style */
+function parseCSV(text){
+  text=text.replace(/^﻿/,"");const firstLine=text.split(/\r?\n/)[0]||"";const delim=(firstLine.match(/;/g)||[]).length>(firstLine.match(/,/g)||[]).length?";":",";
+  const rows=[];let row=[],cur="",q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){if(c==='"'){if(text[i+1]==='"'){cur+='"';i++}else q=false}else cur+=c}
+    else if(c==='"')q=true;else if(c===delim){row.push(cur);cur=""}else if(c==="\n"||c==="\r"){if(c==="\r"&&text[i+1]==="\n")i++;row.push(cur);rows.push(row);row=[];cur=""}else cur+=c}
+  if(cur||row.length){row.push(cur);rows.push(row)}
+  return rows.filter(r=>r.some(x=>x.trim()!==""));
+}
+function normDate(s){s=s.trim();let m;
+  if(m=s.match(/^(\d{4})-(\d{2})-(\d{2})/))return m[1]+"-"+m[2]+"-"+m[3];
+  if(m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/))return m[3]+"-"+pad(m[1])+"-"+pad(m[2]);      // US MM/DD/YYYY
+  if(m=s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/))return m[3]+"-"+pad(m[2])+"-"+pad(m[1]);      // DD.MM.YYYY
+  return null}
+function normAmount(s){s=String(s).trim().replace(/[$€£\s]/g,"");let neg=/^\(.*\)$/.test(s)||s.startsWith("-")||s.startsWith("−");s=s.replace(/[()−-]/g,"");
+  if(/,\d{2}$/.test(s)&&!/\.\d{2}$/.test(s))s=s.replace(/\./g,"").replace(",",".");else s=s.replace(/,/g,"");const v=parseFloat(s);return isNaN(v)?null:(neg?-v:v)}
+
+Icon.sales=html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 7h11l3 4-3 4H5"/><path d="M9 11h6"/><path d="M4 20h16"/></svg>`;
+const catName=(state,id)=>(state.categories.find(c=>c.id===id)||{name:id}).name;
+
+/* =====================================================================
+   6. VIEWS
+   ===================================================================== */
+function Overview({state,M,F,A,go}){
+  const ref=useReveal([]);
+  const n=M.months.length,cash=M.closing[n-1];
+  const ttmNet=M.net.slice(-12).reduce((s,x)=>s+x,0);
+  const minF=Math.min(...F.closing),minIdx=F.closing.indexOf(minF);
+  const inv90=["inv_dep","inv_bal","freight"].reduce((s,c)=>s+F.byCat[c].slice(0,3).reduce((t,x)=>t+x,0),0);
+  const labels=[...M.months,...F.months].map(mLabel);
+  const balA=[...M.closing,...F.closing.map(()=>null)];
+  const balF=[...M.closing.map((v,i)=>i===n-1?v:null),...F.closing];
+  const outCats=Object.entries(M.byCat).map(([id,v])=>({id,v:-v.slice(-12).reduce((s,x)=>s+Math.min(x,0),0)})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
+  const top=outCats.slice(0,7),other=outCats.slice(7).reduce((s,x)=>s+x.v,0),maxV=top[0]?.v||1,totalOut=outCats.reduce((s,x)=>s+x.v,0);
+  return html`<div ref=${ref} class="grid">
+    <div class="grid g4">
+      <${Kpi} label="Cash in bank" value=${fmt(cash)} meta=${"at end of "+mLong(M.months[n-1])}/>
+      <${Kpi} label="Net cash flow · last 12 months" value=${fmt(ttmNet,{sign:1})} meta=${"≈ "+fmt(ttmNet/12,{sign:1})+" per month"}/>
+      <${Kpi} label="Lowest projected balance" value=${fmt(minF)} meta=${"in "+mLong(F.months[minIdx])}><span class=${"pill "+(minF>=A.minCash?"good":"bad")}>${minF>=A.minCash?"✓ above":"⚠ below"} ${fmtK(A.minCash)} floor</span><//>
+      <${Kpi} label="Inventory cash out · next 90 days" value=${fmt(inv90)} meta="deposits, balances, freight & duties"/>
+    </div>
+    <div class="card xl reveal">
+      <h3>Cash balance — actual and 12-month forecast</h3>
+      <div class="hint">Watch the autumn: stock for Black Friday is paid for months before the sales come in. Adjust in <a href="#forecast" onClick=${e=>{e.preventDefault();go("forecast")}} style=${{color:"var(--accent)"}}>Forecast</a>.</div>
+      <${LineChart} labels=${labels} splitAt=${n-1} height=${290} refLine=${{value:A.minCash,label:"Minimum cash "+fmtK(A.minCash)}}
+        series=${[{name:"Actual balance",color:"var(--s1)",values:balA},{name:"Forecast balance",color:"var(--s1)",values:balF,dashFrom:0}]}/>
+      <div class="legend"><span><i style=${{background:"var(--s1)"}}></i>Actual balance</span><span style=${{color:"var(--s1)"}}><i class="dash"></i><span style=${{color:"var(--ink-2)"}}>Forecast balance</span></span><span style=${{color:"var(--bad)"}}><i class="dash"></i><span style=${{color:"var(--ink-2)"}}>Minimum cash floor</span></span></div>
+    </div>
+    <div class="grid g2">
+      <div class="card reveal">
+        <h3>Money in vs money out</h3><div class="hint">Monthly, actual + forecast (lighter)</div>
+        <${DivergingBars} labels=${labels} up=${[...M.inflow,...F.inflow]} down=${[...M.outflow,...F.outflow]} upName="Money in" downName="Money out" splitAt=${n}/>
+        <div class="legend"><span><i style=${{background:"var(--s1)",height:"10px",width:"10px",borderRadius:"3px"}}></i>Money in</span><span><i style=${{background:"var(--s2)",height:"10px",width:"10px",borderRadius:"3px"}}></i>Money out</span></div>
+      </div>
+      <div class="card reveal">
+        <h3>Where the money goes</h3><div class="hint">Outflows, last 12 months · ${fmt(totalOut)}</div>
+        <div style=${{marginTop:"16px"}}>
+          ${top.map(x=>html`<div class="hbar" key=${x.id} title=${catName(state,x.id)+": "+fmt(x.v)}><span>${catName(state,x.id)}</span><div class="track"><div class="bar" style=${{width:(x.v/maxV*100)+"%"}}></div></div><span class="v">${fmtK(x.v)} · ${(x.v/totalOut*100).toFixed(0)}%</span></div>`)}
+          ${other>0&&html`<div class="hbar"><span class="muted">Other · ${outCats.length-7} categories</span><div class="track"><div class="bar" style=${{width:(other/maxV*100)+"%",opacity:.5}}></div></div><span class="v">${fmtK(other)} · ${(other/totalOut*100).toFixed(0)}%</span></div>`}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function SalesToCash({state,M}){
+  const ref=useReveal([]);
+  const months=M.months.filter(k=>state.sales[k]);
+  const [sel,setSel]=useState("ttm");
+  const keys=sel==="ttm"?months.slice(-12):[sel];
+  const sum=f=>keys.reduce((s,k)=>s+f(state.sales[k]||{}),0);
+  const cash=cat=>keys.reduce((s,k)=>s+((M.byCat[cat]||[])[M.months.indexOf(k)]||0),0);
+  const sG=sum(x=>x.shopGross||0),sT=sum(x=>x.shopTax||0),sR=sum(x=>x.shopRefunds||0),sF=sum(x=>x.shopFees||0);
+  const sNet=sG+sT-sR-sF,sPaid=cash("shop_payouts");
+  const aG=sum(x=>x.amzGross||0),aR=sum(x=>x.amzRefunds||0),aF=sum(x=>x.amzFees||0),aNet=aG-aR-aF,aPaid=cash("amz_settle");
+  const capW=-cash("cap_out"),taxPaid=-cash("salestax");
+  const gross=sG+aG,landed=sPaid+aPaid;
+  const lastK=months[months.length-1],sn=state.snap[lastK]||{itShop:0,itAmz:0};
+  const daily=k=>{const s=state.sales[k];return s?{s:(s.shopGross+s.shopTax-s.shopRefunds-s.shopFees)/dim(k),a:(s.amzGross-s.amzRefunds-s.amzFees)/dim(k)}:{s:1,a:1}};
+  const dd=daily(lastK);
+
+  const labels=months.map(mLabel);
+  return html`<div ref=${ref} class="grid">
+    <div class="grid g4">
+      <${Kpi} label="Gross sales · both channels" value=${fmt(gross)} meta=${sel==="ttm"?"last 12 months":mLong(sel)}/>
+      <${Kpi} label="Cash that reached the bank" value=${fmt(landed)} meta="payouts + settlements"><span class="pill">${(landed/gross*100).toFixed(0)}% of gross</span><//>
+      <${Kpi} label="Fees & refunds" value=${fmt(-(sR+sF+aR+aF))} meta=${((sR+sF+aR+aF)/gross*100).toFixed(1)+"% of gross sales"}/>
+      <${Kpi} label="In transit at month end" value=${fmt(sn.itShop+sn.itAmz)} meta=${"Shopify ≈ "+(sn.itShop/dd.s).toFixed(1)+" days · Amazon ≈ "+(sn.itAmz/dd.a).toFixed(0)+" days"}/>
+    </div>
+    <div class="card xl reveal">
+      <div class="toolbar" style=${{justifyContent:"space-between"}}>
+        <div><h3>Gross sales vs cash received</h3><div class="hint">Both channels. The gap is fees, refunds and timing; in November the cash trails the sales.</div></div>
+      </div>
+      <${LineChart} labels=${labels} height=${270} series=${[{name:"Gross sales",color:"var(--s2)",values:months.map(k=>state.sales[k].shopGross+state.sales[k].amzGross)},{name:"Payouts + settlements",color:"var(--s1)",values:months.map(k=>{const i=M.months.indexOf(k);return (M.byCat.shop_payouts[i]||0)+(M.byCat.amz_settle[i]||0)})}]}/>
+      <div class="legend"><span><i style=${{background:"var(--s2)"}}></i>Gross sales</span><span><i style=${{background:"var(--s1)"}}></i>Payouts + settlements</span></div>
+    </div>
+    <div class="card xl reveal">
+      <div class="toolbar" style=${{justifyContent:"space-between"}}>
+        <div><h3>From orders to bank</h3><div class="hint">How gross sales turn into deposits, by channel</div></div>
+        <select value=${sel} onChange=${e=>setSel(e.target.value)}><option value="ttm">Last 12 months</option>${months.slice().reverse().map(k=>html`<option key=${k} value=${k}>${mLong(k)}</option>`)}</select>
+      </div>
+      <div class="grid g2e" style=${{marginTop:"6px"}}>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Shopify</th><th>Amount</th><th>% of gross</th></tr></thead>
+          <tbody>
+            <tr><td>Gross sales</td><td>${fmt(sG)}</td><td class="muted">100%</td></tr>
+            <tr><td style=${{color:"var(--ink-2)",paddingLeft:"26px"}}>Sales tax collected</td><td>${fmt(sT,{sign:1})}</td><td class="muted">${(sT/sG*100).toFixed(1)}%</td></tr>
+            <tr><td style=${{color:"var(--ink-2)",paddingLeft:"26px"}}>Refunds</td><td>${fmt(-sR)}</td><td class="muted">${(-sR/sG*100).toFixed(1)}%</td></tr>
+            <tr><td style=${{color:"var(--ink-2)",paddingLeft:"26px"}}>Payment processing fees</td><td>${fmt(-sF)}</td><td class="muted">${(-sF/sG*100).toFixed(1)}%</td></tr>
+            <tr class="tot"><td>Net earned</td><td>${fmt(sNet)}</td><td class="muted">${(sNet/sG*100).toFixed(1)}%</td></tr>
+            <tr><td style=${{color:"var(--ink-2)",paddingLeft:"26px"}}>Timing: in transit (opening − closing)</td><td>${fmt(sPaid-sNet,{sign:1})}</td><td></td></tr>
+            <tr class="tot"><td>Shopify payouts to bank</td><td>${fmt(sPaid)}</td><td class="muted">${(sPaid/sG*100).toFixed(1)}%</td></tr>
+            <tr><td style=${{color:"var(--ink-2)",paddingLeft:"26px"}}>Less: Shopify Capital withheld</td><td>${fmt(-capW)}</td><td></td></tr>
+            <tr><td style=${{color:"var(--ink-2)",paddingLeft:"26px"}}>Sales tax paid to states</td><td>${fmt(-taxPaid)}</td><td></td></tr>
+          </tbody></table></div>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Amazon</th><th>Amount</th><th>% of gross</th></tr></thead>
+          <tbody>
+            <tr><td>Gross sales</td><td>${fmt(aG)}</td><td class="muted">100%</td></tr>
+            <tr><td style=${{color:"var(--ink-2)",paddingLeft:"26px"}}>Refunds</td><td>${fmt(-aR)}</td><td class="muted">${(-aR/aG*100).toFixed(1)}%</td></tr>
+            <tr><td style=${{color:"var(--ink-2)",paddingLeft:"26px"}}>Referral + FBA fees</td><td>${fmt(-aF)}</td><td class="muted">${(-aF/aG*100).toFixed(1)}%</td></tr>
+            <tr class="tot"><td>Net earned</td><td>${fmt(aNet)}</td><td class="muted">${(aNet/aG*100).toFixed(1)}%</td></tr>
+            <tr><td style=${{color:"var(--ink-2)",paddingLeft:"26px"}}>Timing: settlement cycle (14 days)</td><td>${fmt(aPaid-aNet,{sign:1})}</td><td></td></tr>
+            <tr class="tot"><td>Amazon settlements to bank</td><td>${fmt(aPaid)}</td><td class="muted">${(aPaid/aG*100).toFixed(1)}%</td></tr>
+          </tbody></table></div>
+      </div>
+      <p class="note" style=${{marginTop:"16px"}}>Sales tax is collected by Shopify and arrives inside the payout, but it is not the brand's money: it goes back to the states the following month. Amazon collects and remits sales tax itself (marketplace facilitator), so it never reaches the bank.</p>
+    </div>
+  </div>`;
+}
+
+function Statement({state,M,F}){
+  const ref=useReveal([]);
+  const [range,setRange]=useState("12a");
+  const isF=k=>F.months.includes(k);
+  const cols=range==="12a"?[...M.months.slice(-6),...F.months.slice(0,6)]:range==="act"?M.months.slice(-12):F.months;
+  const get=(cat,k)=>isF(k)?(F.byCat[cat]||[])[F.months.indexOf(k)]||0:(M.byCat[cat]||[])[M.months.indexOf(k)]||0;
+  const opening=k=>{if(isF(k)){const i=F.months.indexOf(k);return i===0?F.openingBalance:F.closing[i-1]}const i=M.months.indexOf(k);return i===0?state.openingBalance:M.closing[i-1]};
+  const closing=k=>isF(k)?F.closing[F.months.indexOf(k)]:M.closing[M.months.indexOf(k)];
+  const sections=[["operating","Operating activities"],["investing","Investing activities"],["financing","Financing activities"]];
+  const cats=state.categories;
+  const cell=(v,k)=>html`<td class=${isF(k)?"fc":""}>${Math.abs(v)<.5?html`<span class="muted">—</span>`:fmt(v)}</td>`;
+  return html`<div ref=${ref} class="grid"><div class="card xl reveal">
+    <div class="toolbar" style=${{justifyContent:"space-between"}}>
+      <div><h3>Statement of cash flows · direct method</h3><div class="hint">Shaded columns are forecast. Every actual figure ties back to a bank transaction.</div></div>
+      <div class="seg" style=${{minWidth:"360px"}}>${[["12a","6 actual + 6 forecast"],["act","Last 12 actual"],["fc","Next 12 forecast"]].map(([k,l])=>html`<button key=${k} class=${range===k?"on":""} onClick=${()=>setRange(k)}>${l}</button>`)}</div>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Category</th>${cols.map(k=>html`<th key=${k} class=${isF(k)?"fc":""}>${mLabel(k)}${isF(k)?" F":""}</th>`)}</tr></thead>
+      <tbody>
+        <tr class="tot"><td>Opening balance</td>${cols.map(k=>html`<td key=${k} class=${isF(k)?"fc":""}>${fmt(opening(k))}</td>`)}</tr>
+        ${sections.map(([s,label])=>{const cs=cats.filter(c=>c.section===s);return html`<${React.Fragment} key=${s}>
+          <tr class="sec"><td>${label}</td>${cols.map(k=>html`<td key=${k}>${fmt(cs.reduce((t,c)=>t+get(c.id,k),0),{sign:1})}</td>`)}</tr>
+          ${cs.map(c=>html`<tr key=${c.id}><td style=${{paddingLeft:"26px",color:"var(--ink-2)"}}>${c.name}</td>${cols.map(k=>html`<${React.Fragment} key=${k}>${cell(get(c.id,k),k)}<//>`)}</tr>`)}
+        <//>`})}
+        <tr class="tot"><td>Net cash flow</td>${cols.map(k=>html`<td key=${k} class=${isF(k)?"fc":""}>${fmt(cats.reduce((t,c)=>t+get(c.id,k),0),{sign:1})}</td>`)}</tr>
+        <tr class="tot"><td>Closing balance</td>${cols.map(k=>html`<td key=${k} class=${isF(k)?"fc":""}>${fmt(closing(k))}</td>`)}</tr>
+      </tbody></table></div>
+  </div></div>`;
+}
+
+function Range({label,value,min,max,step,onChange,display}){
+  return html`<div class="field"><div class="row"><label>${label}</label><output>${display?display(value):value}</output></div><input type="range" min=${min} max=${max} step=${step} value=${value} onInput=${e=>onChange(+e.target.value)}/></div>`;
+}
+function Seg({label,value,options,onChange,display}){
+  return html`<div class="field"><div class="row"><label>${label}</label><output>${display?display(value):value}</output></div><div class="seg">${options.map(o=>html`<button key=${o} class=${value===o?"on":""} onClick=${()=>onChange(o)}>${display?display(o):o}</button>`)}</div></div>`;
+}
+function Forecast({M,F,A,setA}){
+  const ref=useReveal([]);
+  const set=k=>v=>setA({...A,[k]:v});
+  const labels=[...M.months.slice(-12),...F.months].map(mLabel);
+  const minF=Math.min(...F.closing),minIdx=F.closing.indexOf(minF);
+  const below=F.closing.map((v,i)=>v<A.minCash?i:-1).filter(i=>i>=0);
+  const keyRows=[["shop_payouts","Shopify payouts"],["amz_settle","Amazon settlements"],["inv_dep","Inventory deposits"],["inv_bal","Inventory balances"],["freight","Freight & duties"],["meta","Meta Ads"],["google","Google Ads"],["fulfil","Fulfillment (3PL)"],["salestax","Sales tax remitted"],["cap_out","Shopify Capital"]];
+  const pos=F.pos.filter(p=>p.balDate.slice(0,7)>=F.months[0]||p.status==="Planned").slice(0,8);
+  return html`<div ref=${ref} class="grid" style=${{gridTemplateColumns:"minmax(280px,340px) minmax(0,1fr)"}}>
+    <div class="card xl reveal" style=${{alignSelf:"start"}}>
+      <h3>Assumptions</h3><div class="hint">Drag to update the forecast live</div>
+      <div style=${{marginTop:"8px"}}>
+        <${Range} label="Shopify sales growth / month" value=${A.growthS} min=${-3} max=${5} step=${0.5} onChange=${set("growthS")} display=${v=>(v>0?"+":"")+v+"%"}/>
+        <${Range} label="Amazon sales growth / month" value=${A.growthA} min=${-3} max=${5} step=${0.5} onChange=${set("growthA")} display=${v=>(v>0?"+":"")+v+"%"}/>
+        <${Range} label="Black Friday & holiday vs last year" value=${A.bfcm} min=${60} max=${150} step=${5} onChange=${set("bfcm")} display=${v=>v+"%"}/>
+        <${Range} label="Ad spend, % of Shopify sales" value=${A.ads} min=${10} max=${50} step=${1} onChange=${set("ads")} display=${v=>v+"% · ROAS "+(100/v).toFixed(1)+"x"}/>
+        <${Range} label="Refund rate" value=${A.refunds} min=${0} max=${15} step=${0.5} onChange=${set("refunds")} display=${v=>v+"%"}/>
+        <${Range} label="Product cost, % of gross sales" value=${A.cogs} min=${15} max=${40} step=${1} onChange=${set("cogs")} display=${v=>v+"%"}/>
+        <${Seg} label="Supplier deposit" value=${A.deposit} options=${[0,30,50,100]} onChange=${set("deposit")} display=${v=>v+"%"}/>
+        <${Seg} label="Production + shipping lead time" value=${A.lead} options=${[1,2,3]} onChange=${set("lead")} display=${v=>v+" mo"}/>
+        <${Range} label="Freight & duties, % of PO" value=${A.freight} min=${5} max=${30} step=${1} onChange=${set("freight")} display=${v=>v+"%"}/>
+        <div class="field"><div class="row"><label>New hire starts</label><output>${A.hire<0?"No hire":mLong(F.months[A.hire])}</output></div>
+          <select value=${A.hire} onChange=${e=>set("hire")(+e.target.value)}><option value=${-1}>No new hire</option>${F.months.map((k,i)=>html`<option key=${k} value=${i}>${mLong(k)}</option>`)}</select></div>
+        <${Range} label="New hire monthly cost" value=${A.hireCost} min=${3000} max=${12000} step=${250} onChange=${set("hireCost")} display=${fmt}/>
+        <${Range} label="One-off investment" value=${A.capexAmt} min=${0} max=${80000} step=${2500} onChange=${set("capexAmt")} display=${fmt}/>
+        ${A.capexAmt>0&&html`<div class="field"><div class="row"><label>Investment month</label></div><select value=${A.capexMonth} onChange=${e=>set("capexMonth")(+e.target.value)}>${F.months.map((k,i)=>html`<option key=${k} value=${i}>${mLong(k)}</option>`)}</select></div>`}
+        <${Range} label="Minimum cash floor" value=${A.minCash} min=${25000} max=${200000} step=${5000} onChange=${set("minCash")} display=${fmt}/>
+        <div style=${{marginTop:"14px"}}><${MBtn} onClick=${()=>setA(DEFAULT_A)}>Reset assumptions<//></div>
+      </div>
+    </div>
+    <div class="grid" style=${{alignContent:"start"}}>
+      <div class="callout reveal" style=${{background:below.length?"color-mix(in srgb,var(--bad) 10%,var(--surface))":"var(--surface)",border:"1px solid var(--line)"}}>
+        <span style=${{fontSize:"20px",color:below.length?"var(--bad)":"var(--good)"}}>${below.length?"⚠":"✓"}</span>
+        <div>${below.length
+          ?html`<b>Cash dips below the ${fmt(A.minCash)} floor in ${below.length} month${below.length>1?"s":""}</b>, starting ${mLong(F.months[below[0]])}. Lowest point: ${fmt(minF)} in ${mLong(F.months[minIdx])}. Options: negotiate a lower deposit, order closer to the season, trim ad spend, or line up inventory financing before then.`
+          :html`<b>Cash stays above the ${fmt(A.minCash)} floor all year.</b> Lowest point: ${fmt(minF)} in ${mLong(F.months[minIdx])}. Closing balance in ${mLong(F.months[11])}: ${fmt(F.closing[11])}.`}</div>
+      </div>
+      <div class="card xl reveal">
+        <h3>Projected cash balance</h3><div class="hint">Last 12 months actual, next 12 months forecast</div>
+        <${LineChart} labels=${labels} splitAt=${11} height=${280} refLine=${{value:A.minCash,label:"Floor "+fmtK(A.minCash)}}
+          series=${[{name:"Cash balance",color:"var(--s1)",values:[...M.closing.slice(-12),...F.closing],dashFrom:11}]}/>
+      </div>
+      <div class="card reveal">
+        <h3>Purchase orders</h3><div class="hint">Open orders already placed with the manufacturer, plus orders the forecast will need to place</div>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Order</th><th>Stock for</th><th>Value</th><th>Deposit</th><th>Balance due</th><th>Status</th></tr></thead>
+          <tbody>${pos.map((p,i)=>html`<tr key=${i}><td>${p.no}</td><td>${mLong(p.salesMonth)}</td><td>${fmt(p.amount)}</td><td>${fmt(-p.dep)} · ${mLabel(p.depDate.slice(0,7))}</td><td>${fmt(-p.bal)} · ${mLabel(p.balDate.slice(0,7))}</td><td><span class=${"badge "+(p.status==="Placed"?"good":"")} style=${p.status==="Planned"?{background:"var(--surface-2)",color:"var(--ink-2)"}:null}>${p.status}</span></td></tr>`)}</tbody>
+        </table></div>
+      </div>
+      <div class="card reveal">
+        <h3>How the forecast is built</h3>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Driver</th>${F.months.map(k=>html`<th key=${k} class="fc">${mLabel(k)}</th>`)}</tr></thead>
+          <tbody>
+            <tr><td>Shopify gross sales (P&L)</td>${F.shop.map((v,i)=>html`<td key=${i} class="fc">${fmt(v)}</td>`)}</tr>
+            <tr><td>Amazon gross sales (P&L)</td>${F.amz.map((v,i)=>html`<td key=${i} class="fc">${fmt(v)}</td>`)}</tr>
+            ${keyRows.map(([id,l])=>html`<tr key=${id}><td style=${{color:"var(--ink-2)"}}>${l}</td>${F.byCat[id].map((v,i)=>html`<td key=${i} class="fc">${Math.abs(v)<.5?html`<span class="muted">—</span>`:fmt(v)}</td>`)}</tr>`)}
+            <tr class="tot"><td>Net cash flow</td>${F.net.map((v,i)=>html`<td key=${i} class="fc">${fmt(v,{sign:1})}</td>`)}</tr>
+            <tr class="tot"><td>Closing balance</td>${F.closing.map((v,i)=>html`<td key=${i} class="fc" style=${{color:v<A.minCash?"var(--bad)":null}}>${fmt(v)}</td>`)}</tr>
+          </tbody></table></div>
+        <p class="note" style=${{marginTop:"16px"}}>Sales = 3-month run-rate × last year's seasonality × growth. Shopify pays out ~90% within the month (T+2, twice a week), net of fees and refunds and including sales tax; Amazon settles every 14 days, so about half of a month's sales land the next month. Stock is ordered ${A.lead+1} months before it sells: ${A.deposit}% deposit at order, the rest on shipment, plus freight and duties on arrival. Shopify Capital takes 12% of each payout until the advance is repaid.</p>
+      </div>
+    </div>
+  </div>`;
+}
+
+function BudgetView({state,M}){
+  const ref=useReveal([]);
+  const B=useMemo(()=>budget(state,M),[state,M]);
+  const months=M.months.filter(k=>k.startsWith("2026"));
+  const [upto,setUpto]=useState(months.length-1);
+  if(!B||!months.length) return html`<div class="card">Budget needs data from 2025–2026.</div>`;
+  const sel=months.slice(0,upto+1);
+  const act=c=>sel.reduce((s,k)=>s+((M.byCat[c]||[])[M.months.indexOf(k)]||0),0);
+  const bud=c=>sel.reduce((s,k,i)=>s+((B.byCat[c]||[])[i]||0),0);
+  const rows=state.categories.filter(c=>B.byCat[c.id]).map(c=>{const a=act(c.id),b=bud(c.id),v=a-b;return {...c,a,b,v,p:b?v/Math.abs(b):0}}).filter(r=>Math.abs(r.a)+Math.abs(r.b)>0.5);
+  const tot={a:rows.reduce((s,r)=>s+r.a,0),b:rows.reduce((s,r)=>s+r.b,0)};
+  const cumA=[],cumB=[];months.reduce((s,k)=>{const v=s+M.net[M.months.indexOf(k)];cumA.push(v);return v},0);months.reduce((s,k,i)=>{const v=s+B.net[i];cumB.push(v);return v},0);
+  const salesA=sel.reduce((s,k)=>s+(state.sales[k]?state.sales[k].shopGross+state.sales[k].amzGross:0),0),salesB=sel.reduce((s,k,i)=>s+B.shop[i]+B.amz[i],0);
+  const drivers=rows.slice().sort((x,y)=>Math.abs(y.v)-Math.abs(x.v)).slice(0,6);const maxV=Math.max(...drivers.map(d=>Math.abs(d.v)),1);
+  return html`<div ref=${ref} class="grid">
+    <div class="grid g4">
+      <${Kpi} label="Gross sales · actual vs budget" value=${fmt(salesA)} meta=${"budget "+fmt(salesB)}><span class=${"badge "+(salesA>=salesB?"good":"bad")}>${pct((salesA-salesB)/salesB)}</span><//>
+      <${Kpi} label="Net cash flow · actual" value=${fmt(tot.a,{sign:1})} meta=${"budget "+fmt(tot.b,{sign:1})}/>
+      <${Kpi} label="Cash variance" value=${fmt(tot.a-tot.b,{sign:1})}><span class=${"badge "+(tot.a>=tot.b?"good":"bad")}>${tot.a>=tot.b?"▲ Favourable":"▼ Unfavourable"}</span><//>
+      <div class="card kpi reveal"><div class="label">Year to date through</div>
+        <select style=${{marginTop:"12px",width:"100%"}} value=${upto} onChange=${e=>setUpto(+e.target.value)}>${months.map((k,i)=>html`<option key=${k} value=${i}>${mLong(k)}</option>`)}</select>
+        <div class="meta">Budget approved December 2025</div></div>
+    </div>
+    <div class="grid g2">
+      <div class="card xl reveal">
+        <h3>Cumulative net cash flow, 2026</h3><div class="hint">Actual vs budget</div>
+        <${LineChart} labels=${months.map(mLabel)} height=${260} series=${[{name:"Actual",color:"var(--s1)",values:cumA},{name:"Budget",color:"var(--s2)",values:cumB.slice(0,months.length),dashed:true}]}/>
+        <div class="legend"><span><i style=${{background:"var(--s1)"}}></i>Actual</span><span style=${{color:"var(--s2)"}}><i class="dash"></i><span style=${{color:"var(--ink-2)"}}>Budget</span></span></div>
+      </div>
+      <div class="card reveal">
+        <h3>Biggest variances</h3><div class="hint">What explains the gap</div>
+        <div style=${{marginTop:"16px"}}>${drivers.map(d=>html`<div key=${d.id} style=${{padding:"9px 0",borderBottom:"1px solid var(--line)"}}>
+          <div style=${{display:"flex",justifyContent:"space-between",gap:"10px",fontSize:"13.5px"}}><span>${d.name}</span><span class="mono">${fmt(d.v,{sign:1})}</span></div>
+          <div style=${{display:"flex",alignItems:"center",gap:"10px",marginTop:"6px"}}>
+            <div style=${{flex:1,height:"8px",borderRadius:"2rem",background:"var(--surface-2)",overflow:"hidden"}}><div style=${{width:(Math.abs(d.v)/maxV*100)+"%",height:"100%",borderRadius:"2rem",background:d.v>=0?"var(--good)":"var(--bad)"}}></div></div>
+            <span class=${"badge "+(d.v>=0?"good":"bad")}>${d.v>=0?"▲ Fav.":"▼ Unfav."}</span></div></div>`)}</div>
+      </div>
+    </div>
+    <div class="card xl reveal">
+      <h3>Budget vs actual by category</h3><div class="hint">Year to date, cash basis. Positive variance = more cash than planned.</div>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Category</th><th>Budget</th><th>Actual</th><th>Variance</th><th>Var %</th><th>Status</th></tr></thead>
+        <tbody>${rows.map(r=>html`<tr key=${r.id}><td>${r.name}</td><td>${fmt(r.b)}</td><td>${fmt(r.a)}</td><td>${fmt(r.v,{sign:1})}</td><td>${r.b?pct(r.p):"—"}</td><td>${Math.abs(r.v)<1?html`<span class="muted">on plan</span>`:html`<span class=${"badge "+(r.v>=0?"good":"bad")}>${r.v>=0?"▲ Favourable":"▼ Unfavourable"}</span>`}</td></tr>`)}
+          <tr class="tot"><td>Net cash flow</td><td>${fmt(tot.b,{sign:1})}</td><td>${fmt(tot.a,{sign:1})}</td><td>${fmt(tot.a-tot.b,{sign:1})}</td><td></td><td></td></tr>
+        </tbody></table></div>
+    </div>
+  </div>`;
+}
+
+/* CSV mapping — standard, QuickBooks, or Shopify payouts export */
+function mapRows(rows){
+  const h=rows[0].map(x=>x.trim().toLowerCase());
+  const find=(...names)=>h.findIndex(x=>names.includes(x));
+  if(find("payout date")>=0&&find("total")>=0){
+    const iD=find("payout date"),iT=find("total"),iS=find("status");const out=[],skipped=[];
+    rows.slice(1).forEach((r,n)=>{const d=normDate(r[iD]||""),a=normAmount(r[iT]||"");if(!d||a==null||(iS>=0&&!/paid/i.test(r[iS]||"paid"))){skipped.push(n+2);return}
+      out.push({date:d,amount:a,description:"Shopify Payments payout",counterparty:"Shopify Payments",categoryName:"Shopify payouts"})});
+    return {rows:out,skipped,format:"Shopify payouts"};
+  }
+  const iDate=find("date","transaction date"),iAmt=find("amount","amount (+/-)"),iDesc=find("description","memo","memo/description"),iCp=find("counterparty","name","payee","vendor"),iCat=find("category","split","account");
+  if(iDate<0||iAmt<0)return {error:"Couldn't find Date and Amount columns. Headers found: "+rows[0].join(", ")};
+  const fmtName=iCat>=0&&(h[iCat]==="split"||h[iCat]==="account")?"QuickBooks":"standard";
+  const out=[],skipped=[];
+  rows.slice(1).forEach((r,n)=>{const d=normDate(r[iDate]||""),a=normAmount(r[iAmt]||"");if(!d||a==null||/total/i.test(r.join(" "))){skipped.push(n+2);return}
+    out.push({date:d,amount:a,description:(r[iDesc]||"").trim(),counterparty:(r[iCp]||"").trim()||"Unknown",categoryName:(r[iCat]||"").trim()||"Uncategorised"})});
+  return {rows:out,skipped,format:fmtName};
+}
+const SAMPLE=`Date,Amount,Description,Counterparty,Category
+2026-11-02,18450,Shopify Payments payout,Shopify Payments,Shopify payouts
+2026-11-03,-2400,Meta ads billing,Meta Platforms,Meta Ads`;
+
+function Transactions({state,setState}){
+  const ref=useReveal([]);
+  const [q,setQ]=useState("");const [cat,setCat]=useState("all");const [msg,setMsg]=useState(null);const [over,setOver]=useState(false);const [limit,setLimit]=useState(60);
+  const list=useMemo(()=>{const ql=q.toLowerCase();return state.transactions.filter(t=>(cat==="all"||t.category===cat)&&(!ql||(t.description+" "+t.counterparty).toLowerCase().includes(ql))).slice().reverse()},[state,q,cat]);
+  const closed=closedThrough(state);
+  const openRows=state.transactions.filter(t=>t.date.slice(0,7)>closed).length;
+  const importText=(st,text,name,notes)=>{
+    const rows=parseCSV(text);if(rows.length<2){notes.push(name+": no data rows found.");return st}
+    const r=mapRows(rows);if(r.error){notes.push(name+": "+r.error);return st}
+    const cats=st.categories.slice();const keys=new Set(st.transactions.map(t=>t.date+"|"+t.amount+"|"+t.description));
+    let added=0,dup=0,later=0;const newCats=[];const tx=st.transactions.slice();let id=tx.length;
+    r.rows.forEach(x=>{const key=x.date+"|"+Math.round(x.amount)+"|"+x.description;if(keys.has(key)){dup++;return}keys.add(key);
+      let c=cats.find(c=>c.name.toLowerCase()===x.categoryName.toLowerCase()||c.id===x.categoryName);
+      if(!c){c={id:"c_"+x.categoryName.toLowerCase().replace(/[^a-z0-9]+/g,"_"),name:x.categoryName,section:"operating",kind:x.amount>=0?"in":"out"};cats.push(c);newCats.push(c.name)}
+      tx.push({id:"u"+(++id),date:x.date,amount:Math.round(x.amount),description:x.description,counterparty:x.counterparty,category:c.id});added++;if(x.date.slice(0,7)>closed)later++});
+    tx.sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);
+    notes.push(`${name} (${r.format} format): ${added} added, ${dup} duplicates skipped${r.skipped.length?", "+r.skipped.length+" total, blank or unpaid rows skipped":""}${newCats.length?". New categories: "+newCats.join(", "):""}.${later?` ${later} fall after the closed period (${mLong(closed)}) and will enter the reports once that month is closed.`:""}`);
+    return {...st,transactions:tx,categories:cats};
+  };
+  const onFiles=async files=>{const list=[...files];const texts=await Promise.all(list.map(f=>f.text()));const notes=[];let st=state;texts.forEach((t,i)=>{st=importText(st,t,list[i].name,notes)});setState(st);setMsg({t:notes.join(" ")})};
+  const toCSV=()=>"Date,Amount,Description,Counterparty,Category\n"+state.transactions.map(t=>[t.date,t.amount,t.description,t.counterparty,catName(state,t.category)].map(v=>{v=String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(",")).join("\n");
+  const download=()=>{try{const b=new Blob([toCSV()],{type:"text/csv"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="skincare-transactions.csv";document.body.appendChild(a);a.click();a.remove();setMsg({t:"CSV downloaded. If nothing appeared, your viewer blocks downloads — use Copy instead."})}catch(e){setMsg({bad:1,t:"Download blocked here — use Copy CSV."})}};
+  const copy=async(text,label)=>{try{await navigator.clipboard.writeText(text);setMsg({t:label+" copied to clipboard."})}catch(e){setMsg({bad:1,t:"Clipboard not available in this viewer."})}};
+  return html`<div ref=${ref} class="grid">
+    <div class="grid g2e">
+      <div class="card xl reveal">
+        <h3>Import bank, Shopify or accounting data</h3><div class="hint">CSV from your bank, a Shopify payouts export, or a QuickBooks / Xero report</div>
+        <label class=${"drop"+(over?" over":"")} style=${{display:"block",marginTop:"16px",cursor:"pointer"}}
+          onDragOver=${e=>{e.preventDefault();setOver(true)}} onDragLeave=${()=>setOver(false)} onDrop=${e=>{e.preventDefault();setOver(false);onFiles(e.dataTransfer.files)}}>
+          <div style=${{width:"28px",margin:"0 auto 10px",color:"var(--accent)"}}>${Icon.upload}</div>
+          <b>Drop CSV files here</b><div style=${{fontSize:"13px",marginTop:"4px"}}>or click to choose — several at once is fine</div>
+          <input type="file" accept=".csv,text/csv" multiple style=${{display:"none"}} onChange=${e=>{onFiles(e.target.files);e.target.value=""}}/>
+        </label>
+        ${msg&&html`<div class="callout" style=${{marginTop:"14px",color:msg.bad?"var(--bad)":"var(--ink-2)"}}>${msg.t}</div>`}
+      </div>
+      <div class="card xl reveal note">
+        <h3 style=${{color:"var(--ink)"}}>Accepted formats</h3>
+        <p><b>Standard:</b> <code>Date, Amount, Description, Counterparty, Category</code>. Amount is signed: money in positive, money out negative.</p>
+        <p><b>Shopify payouts:</b> the export from Finances → Payouts (<code>Payout Date, Status, …, Total</code>) is recognised automatically; each paid payout becomes a deposit.</p>
+        <p><b>QuickBooks:</b> a Transaction Detail export with <code>Date, Name, Memo/Description, Split, Amount</code> is mapped automatically.</p>
+        <p>Duplicates are skipped; unknown categories are created as operating. Data stays in this browser — nothing is uploaded to a server.</p>
+        <div class="toolbar" style=${{marginTop:"14px"}}>
+          <${MBtn} onClick=${()=>copy(SAMPLE,"Sample CSV")}>Copy sample CSV<//>
+          <${MBtn} onClick=${download}>Download all as CSV<//>
+          <${MBtn} onClick=${()=>copy(toCSV(),"All transactions")}>Copy all as CSV<//>
+          <${MBtn} ghost onClick=${()=>{setState(generate());setMsg({t:"Demo data restored."})}}>Reset demo data<//>
+        </div>
+      </div>
+    </div>
+    <div class="card xl reveal">
+      <div class="toolbar" style=${{justifyContent:"space-between"}}>
+        <div><h3>Transaction journal</h3><div class="hint">${list.length.toLocaleString("en-US")} of ${state.transactions.length.toLocaleString("en-US")} transactions · reports closed through ${mLong(closed)}${openRows?` · ${openRows} in the open period`:""}</div></div>
+        <div class="toolbar"><input type="search" placeholder="Search description or counterparty" value=${q} onInput=${e=>{setQ(e.target.value);setLimit(60)}} style=${{minWidth:"240px"}}/>
+          <select value=${cat} onChange=${e=>{setCat(e.target.value);setLimit(60)}}><option value="all">All categories</option>${state.categories.map(c=>html`<option key=${c.id} value=${c.id}>${c.name}</option>`)}</select></div>
+      </div>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Date</th><th style=${{textAlign:"left"}}>Description</th><th style=${{textAlign:"left"}}>Counterparty</th><th style=${{textAlign:"left"}}>Category</th><th>Amount</th></tr></thead>
+        <tbody>${list.slice(0,limit).map(t=>html`<tr key=${t.id}><td style=${{fontFamily:"var(--f-data)"}}>${t.date}</td><td style=${{textAlign:"left",fontFamily:"var(--f-head)",whiteSpace:"normal",minWidth:"220px"}}>${t.description}</td><td style=${{textAlign:"left",fontFamily:"var(--f-head)",color:"var(--ink-2)"}}>${t.counterparty}</td><td style=${{textAlign:"left",fontFamily:"var(--f-head)",color:"var(--ink-2)"}}>${catName(state,t.category)}</td><td style=${{color:t.amount>0?"var(--good)":"var(--ink)"}}>${fmt(t.amount,{sign:1})}</td></tr>`)}</tbody>
+      </table></div>
+      ${list.length>limit&&html`<div style=${{marginTop:"16px",textAlign:"center"}}><${MBtn} onClick=${()=>setLimit(limit+200)}>Show more<//></div>`}
+    </div>
+  </div>`;
+}
+
+/* =====================================================================
+   7. APP SHELL
+   ===================================================================== */
+const PRESETS=[
+  {id:"midnight",name:"Midnight Luxe",sw:["#0D0D12","#C9A84C"]},
+  {id:"brutalist",name:"Brutalist Signal",sw:["#111111","#E63B2E"]},
+  {id:"vapor",name:"Vapor Clinic",sw:["#0A0A14","#7B61FF"]}
+];
+const VIEWS=[
+  {id:"overview",name:"Overview",icon:"overview",eyebrow:"Cash position",title:["Profit is an opinion. ","Cash"," is a fact."],sub:"Where the money is, where it goes, and where it is heading through the next holiday season."},
+  {id:"sales",name:"Sales → cash",icon:"sales",eyebrow:"Shopify & Amazon",title:["From checkout ","to bank","."],sub:"Gross sales minus refunds, fees and sales tax, and how long each channel takes to pay out."},
+  {id:"statement",name:"Cash flow statement",icon:"statement",eyebrow:"Direct method",title:["Every dollar, ","accounted for","."],sub:"Monthly statement of cash flows by activity, with actuals and forecast side by side."},
+  {id:"forecast",name:"Forecast",icon:"forecast",eyebrow:"12-month rolling forecast",title:["Pay for Black Friday ","before"," it pays you."],sub:"Stock is bought months ahead of the peak. Move the assumptions and see when cash gets tight."},
+  {id:"budget",name:"Budget vs actual",icon:"budget",eyebrow:"2026 performance",title:["Plan meets ","reality","."],sub:"Year-to-date variance against the budget approved in December 2025, and the lines that explain the gap."},
+  {id:"tx",name:"Transactions & import",icon:"tx",eyebrow:"Source data",title:["Bring your ","own"," numbers."],sub:"Upload a bank, Shopify payouts or QuickBooks CSV and every view updates. Everything stays in your browser."}
+];
+const viewFromHash=()=>{const h=(location.hash||"").slice(1);return VIEWS.find(v=>v.id===h)?h:"overview"};
+
+function App(){
+  const [state,setStateRaw]=useState(loadState);
+  const [preset,setPreset]=useState(loadPreset);
+  const [view,setView]=useState(viewFromHash);
+  const [A,setA]=useState(DEFAULT_A);
+  const setState=s=>{setStateRaw(s);saveState(s)};
+  useEffect(()=>{document.body.dataset.preset=preset;savePreset(preset)},[preset]);
+  useEffect(()=>{const f=()=>setView(viewFromHash());window.addEventListener("hashchange",f);return()=>window.removeEventListener("hashchange",f)},[]);
+  const go=id=>{setView(id);try{history.replaceState(null,"","#"+id)}catch(e){location.hash=id}window.scrollTo({top:0,behavior:"smooth"})};
+  const M=useMemo(()=>monthly(state),[state]);
+  const F=useMemo(()=>forecast(state,A,M),[state,A,M]);
+  const V=VIEWS.find(v=>v.id===view);
+  const headRef=useRef(null);
+  useEffect(()=>{if(!headRef.current||!window.gsap)return;const ctx=gsap.context(()=>{gsap.from(".hd",{y:30,opacity:0,duration:.9,stagger:.08,ease:"power3.out",clearProps:"transform,opacity"})},headRef);return()=>ctx.revert()},[view]);
+  return html`<div class="shell">
+    <aside class="side">
+      <div class="brandmark"><div class="dot">S</div><div><b>Skincare</b><small>Cash flow control</small></div></div>
+      ${VIEWS.map(v=>html`<button key=${v.id} class=${"navbtn"+(view===v.id?" on":"")} onClick=${()=>go(v.id)}><span class="fill"></span>${Icon[v.icon]}<span>${v.name}</span></button>`)}
+      <div class="foot">Demo brand · fictional data.<br/>Shopify + Amazon, US.<br/>Actuals Jan 2025 – ${mLabel(M.months[M.months.length-1])}, forecast to ${mLabel(F.months[11])}.<br/><br/>Built by Daria Busova · FP&A & cash flow forecasting for e-commerce</div>
+    </aside>
+    <main class="main">
+      <div class="top" ref=${headRef}>
+        <div>
+          <div class="eyebrow hd">${V.eyebrow}</div>
+          <h1 class="hd">${V.title[0]}<em>${V.title[1]}</em>${V.title[2]}</h1>
+          <p class="sub hd">${V.sub}</p>
+        </div>
+        <div class="presets hd" role="group" aria-label="Visual style">
+          ${PRESETS.map(p=>html`<${MBtn} key=${p.id} on=${preset===p.id} onClick=${()=>setPreset(p.id)} title=${"Style: "+p.name}><span class="sw" style=${{background:`linear-gradient(135deg,${p.sw[0]} 50%,${p.sw[1]} 50%)`}}></span>${p.name}<//>`)}
+        </div>
+      </div>
+      ${view==="overview"&&html`<${Overview} key=${"o"+preset} state=${state} M=${M} F=${F} A=${A} go=${go}/>`}
+      ${view==="sales"&&html`<${SalesToCash} key=${"c"+preset} state=${state} M=${M}/>`}
+      ${view==="statement"&&html`<${Statement} key=${"s"+preset} state=${state} M=${M} F=${F}/>`}
+      ${view==="forecast"&&html`<${Forecast} key=${"f"+preset} M=${M} F=${F} A=${A} setA=${setA}/>`}
+      ${view==="budget"&&html`<${BudgetView} key=${"b"+preset} state=${state} M=${M}/>`}
+      ${view==="tx"&&html`<${Transactions} key=${"t"+preset} state=${state} setState=${setState}/>`}
+    </main>
+  </div>`;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(html`<${App}/>`);
+
+})();
+</script>
+</body>
+</html>
