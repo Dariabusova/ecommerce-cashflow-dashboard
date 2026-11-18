@@ -2,7 +2,7 @@
 
 A browser-based cash flow dashboard for e-commerce brands. It shows **how sales turn into cash, a 12-month rolling forecast that includes the Black Friday inventory build, and budget vs actual**, built from bank, Shopify and QuickBooks CSV exports.
 
-**Live demo:** _add your GitHub Pages link here_
+**Live demo:** https://dariabusova.github.io/ecommerce-cashflow-dashboard/
 
 The demo brand is a fictional US skincare company selling on Shopify and Amazon (about $3M in annual gross sales). All figures are generated and invented.
 
